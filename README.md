@@ -15,6 +15,10 @@ renamed or moved, and to assist the search process.
 
 ## Roadmap
 
+- [ ] Write import and sync of files (probably using a bipartite graph for new files).
+- [ ] Analyze :clapper: & :sound: to integrate metadata.
+- [ ] Add a minimal CLI to manipulate the data.
+
 
 ### CLI Example
 
