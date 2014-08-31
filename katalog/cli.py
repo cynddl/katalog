@@ -5,13 +5,12 @@ import os
 from . import db, sync
 
 
-
 @click.group()
 def cli():
     pass
 
 
-@click.command()
+@cli.command()
 def init():
     db_path = click.get_app_dir('katalog', force_posix=True)
     click.echo("Generating a database at %s" % db_path)
@@ -28,7 +27,7 @@ def init():
     transaction.commit()
 
 
-@click.command()
+@cli.command()
 def status():
     db_path = os.path.expanduser("~/.katalog")
     root = db.get_root()
@@ -38,7 +37,7 @@ def status():
     click.echo("%i file(s) stored in the database." % count_files)
 
 
-@click.command()
+@cli.command()
 @click.argument('path', type=click.Path(exists=True))
 def add(path):
     root = db.get_root()
@@ -53,7 +52,7 @@ def add(path):
     click.echo("%s files loaded" % (new_count - old_count))
 
 
-@click.command()
+@cli.command()
 def shell():
     """
     Run an interactive shell, loading the root DB.
@@ -69,7 +68,7 @@ def shell():
     shell.interact()
 
 
-@click.command()
+@cli.command()
 def fetch():
     """
     Fetch additional metadata (title…)
@@ -93,13 +92,6 @@ def fetch():
                 f.fetch_metadata(imdb_client)
 
     transaction.commit()
-
-
-cli.add_command(add)
-cli.add_command(init)
-cli.add_command(status)
-cli.add_command(shell)
-cli.add_command(fetch)
 
 if __name__ == '__main__':
     cli()
