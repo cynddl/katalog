@@ -1,1 +1,1 @@
-__ALL__ = ('cli', 'sync', 'models')
+__ALL__ = ('cli', 'sync', 'models', 'services')
