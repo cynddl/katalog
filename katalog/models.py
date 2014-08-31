@@ -15,6 +15,9 @@ class Movie(File):
         self.imdb_id = None
         self.metadata = {}
 
+    def describe(self):
+        pass
+
     @property
     def hash(self):
         """
@@ -38,6 +41,9 @@ class Movie(File):
         """
         Fetch metadata from IMDB using the movie ID.
         """
+        if self.imdb_id is None:
+            raise ValueError('Missing IMDB ID')
+
         m = imdb_client.find_movie_by_id(self.imdb_id)
 
         if m:
@@ -50,3 +56,7 @@ class Movie(File):
             }
 
             self.metadata.update(new_m)
+
+    @property
+    def is_fetched(self):
+        return self.metadata != {}

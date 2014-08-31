@@ -69,11 +69,37 @@ def shell():
     shell.interact()
 
 
+@click.command()
+def fetch():
+    """
+    Fetch additional metadata (title…)
+    """
+
+    from imdbpie import Imdb
+    imdb_client = Imdb()
+
+    from katalog.services.opensubtitles import OpenSubtitles
+    opensub = OpenSubtitles()
+    opensub.login()
+
+    root = db.get_root()
+    files = root['files'].values()
+
+    with click.progressbar(files) as bar:
+        for f in bar:
+            f.identify(opensub)
+
+            if not f.is_fetched and f.imdb_id is not None:
+                f.fetch_metadata(imdb_client)
+
+    transaction.commit()
+
+
 cli.add_command(add)
 cli.add_command(init)
 cli.add_command(status)
 cli.add_command(shell)
-
+cli.add_command(fetch)
 
 if __name__ == '__main__':
     cli()
