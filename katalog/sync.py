@@ -13,4 +13,3 @@ def scan_files(path):
         for f in files:
             if f.endswith(ext):
                 yield Movie(path=root + '/' + f)
-

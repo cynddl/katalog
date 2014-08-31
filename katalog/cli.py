@@ -1,4 +1,4 @@
-import ZODB, transaction
+import transaction
 import click
 import os
 
@@ -12,6 +12,9 @@ def cli():
 
 @cli.command()
 def init():
+    """
+    Initialize a new database.
+    """
     db_path = click.get_app_dir('katalog', force_posix=True)
     click.echo("Generating a database at %s" % db_path)
 
@@ -29,7 +32,9 @@ def init():
 
 @cli.command()
 def status():
-    db_path = os.path.expanduser("~/.katalog")
+    """
+    Check the status of the DB.
+    """
     root = db.get_root()
 
     count_files = len(root['files'])
@@ -40,6 +45,9 @@ def status():
 @cli.command()
 @click.argument('path', type=click.Path(exists=True))
 def add(path):
+    """
+    Add all media files in a directory.
+    """
     root = db.get_root()
     old_count = len(root['files'])
 
@@ -55,7 +63,7 @@ def add(path):
 @cli.command()
 def shell():
     """
-    Run an interactive shell, loading the root DB.
+    Load the DB and run an interactive shell.
     """
 
     root = db.get_root()
@@ -71,7 +79,7 @@ def shell():
 @cli.command()
 def fetch():
     """
-    Fetch additional metadata (title…)
+    Fetch additional metadata (title, rating, ...)
     """
 
     from imdbpie import Imdb
