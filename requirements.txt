@@ -1,0 +1,6 @@
+scandir==0.8
+click==3.2
+guessit==0.8
+imdbpie==1.4.4
+ZODB==4.0.1
+requests==2.4.0
