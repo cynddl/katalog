@@ -1,8 +1,9 @@
 import guessit
 import katalog.sync
 
+import persistent
 
-class File(object):
+class File(persistent.Persistent):
     def __init__(self, path):
         self.path = path
 

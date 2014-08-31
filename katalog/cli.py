@@ -1,7 +1,9 @@
-import dataset
+import ZODB, transaction
 import click
-import sync
 import os
+
+from . import db, sync
+
 
 
 @click.group()
@@ -11,33 +13,44 @@ def cli():
 
 @click.command()
 def init():
-    click.echo("Generating a database at ~/.katalog/")
-
     db_path = click.get_app_dir('katalog', force_posix=True)
+    click.echo("Generating a database at %s" % db_path)
 
     try:
         os.mkdir(db_path)
-        db = dataset.connect('sqlite:///' + db_path + '/katalog.db')
-        print(db)
     except OSError:
         click.echo(click.style("Error: ", fg='red', bold=True) +
                    "%s already exists." % db_path)
+
+    root = db.get_root()
+    from BTrees.OOBTree import OOBTree
+    root['files'] = OOBTree()
+    transaction.commit()
 
 
 @click.command()
 def status():
     db_path = os.path.expanduser("~/.katalog")
-    db = dataset.connect('sqlite:///' + db_path + '/katalog.db')
+    root = db.get_root()
 
-    count_files = len(db['files'])
+    count_files = len(root['files'])
+
     click.echo("%i file(s) stored in the database." % count_files)
 
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True))
 def add(path):
-    files = list(sync.scan_files(path, sync.MEDIA_EXT))
-    click.echo("%s files loaded" % len(files))
+    root = db.get_root()
+    old_count = len(root['files'])
+
+    for f in sync.scan_files(path):
+        root['files'][f.path] = f
+
+    transaction.commit()
+
+    new_count = len(root['files'])
+    click.echo("%s files loaded" % (new_count - old_count))
 
 
 cli.add_command(add)
