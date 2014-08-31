@@ -53,9 +53,27 @@ def add(path):
     click.echo("%s files loaded" % (new_count - old_count))
 
 
+@click.command()
+def shell():
+    """
+    Run an interactive shell, loading the root DB.
+    """
+
+    root = db.get_root()
+
+    import readline
+    import code
+    vars = globals().copy()
+    vars.update(locals())
+    shell = code.InteractiveConsole(vars)
+    shell.interact()
+
+
 cli.add_command(add)
 cli.add_command(init)
 cli.add_command(status)
+cli.add_command(shell)
+
 
 if __name__ == '__main__':
     cli()
